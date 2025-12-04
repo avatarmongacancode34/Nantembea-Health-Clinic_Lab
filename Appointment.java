@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 import java.time.LocalDate;
 
@@ -10,4 +11,8 @@ public  class Appointment{
         this.patient = patient;
         this.date = LocalDate.now();
     }
+=======
+public class Appointment {
+    
+>>>>>>> c4b36c1913ccf813d6df081bd53999add923adf7
 }
