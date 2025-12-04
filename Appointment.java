@@ -1,18 +1,13 @@
-<<<<<<< HEAD
-
 import java.time.LocalDate;
 
 public  class Appointment{
     private Patient patient;
-    private  Doctor doctor
+    private  Doctor doctor;
     private LocalDate date;
 
     public Appointment(Patient patient, Doctor doctor){
         this.patient = patient;
+        this.doctor = doctor;
         this.date = LocalDate.now();
     }
-=======
-public class Appointment {
-    
->>>>>>> c4b36c1913ccf813d6df081bd53999add923adf7
 }
