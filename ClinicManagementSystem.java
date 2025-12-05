@@ -25,12 +25,29 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
     // TODO: Implement interface methods
     public void saveToFile(String filename) throws IOException {
         try (FileWriter writer = new FileWriter(filename)) {
-            for (Patient patient : patients.values()) {
-                writer.write(patient.toString());
-                writer.write("\n");
+
+            if (filename.endsWith("patients.txt")) {
+                for (Patient p : patients.values()) {
+                    writer.write(p.toString() + "\n");
+                }
+            }
+
+            else if (filename.endsWith("doctors.txt")) {
+                for (Doctor d : doctors) {
+                    writer.write(d.toString() + "\n");
+                }
+            }
+
+            else if (filename.endsWith("appointments.txt")) {
+                for (LocalDate date : appointmentsByDate.keySet()) {
+                    for (Appointment a : appointmentsByDate.get(date)) {
+                        writer.write(a.toString() + "\n");
+                    }
+                }
             }
         }
     }
+
 
     @Override
     public void loadFromFile(String filename) throws IOException {
@@ -55,7 +72,6 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                     String phone = attributes[3];
                     Doctor doctor = new Doctor(doctorId, name, email, phone);
                     doctors.add(doctor);
-
                     nextDoctorId = (doctorId > nextDoctorId) ? doctorId + 1 : nextDoctorId;
 
                 }else if (filename.endsWith("appointments.txt")) {
@@ -74,9 +90,10 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                         if (!appointmentsByDate.containsKey(date)) {
                             appointmentsByDate.put(date, new ArrayList<>());
                         }
-
+                        System.out.println("Appoint setup successfully");
                         appointmentsByDate.get(date).add(appointment);
                         patient.addAppointment(date,appointment);
+                        
                     }
                 }
 
@@ -92,6 +109,7 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
         Patient patient = patients.get(patientId);
         if (patient == null) {
             System.out.println("Patient not found");
+            return null;
         }
         return patient;
     }
@@ -107,6 +125,7 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                 return doctor;
             }
         }
+        System.out.println("Doctor not found, Try another ID.");
         return null;
     }
 
@@ -127,17 +146,93 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
         return appointmentsByDate.get(date);
     }
 
+    public boolean isValidEmail(String email) {
+        return email != null && email.contains("@") && email.contains(".") && email.length() >= 5;
+    }
+
+
+    public String readValidEmail(Scanner scanner) {
+        String email;
+        while (true) {
+            System.out.println("Enter email: ");
+            email = scanner.nextLine();
+            if (isValidEmail(email)) break;
+            System.out.println("Invalid email! Try again.");
+        }
+        return email;
+    }
+    public boolean isValidPhone(String phone) {
+        if (phone == null || phone.isEmpty()) {
+            return false;
+        }
+
+        // some numbers can start na +
+        if (phone.startsWith("+")) {
+            phone = phone.substring(1); // tobva taskipper +
+        }
+
+        // isdigit() paya 
+        for (int i = 0; i < phone.length(); i++) {
+            char c = phone.charAt(i);
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+
+        // phone numbers restricted to length of 7 - 15
+        return phone.length() >= 7 && phone.length() <= 15;
+    }
+
+    public String readValidPhone(Scanner scanner) {
+        String phone;
+        while (true) {
+            System.out.println("Enter phone number: ");
+            phone = scanner.nextLine();
+            if (isValidPhone(phone)) break;
+            System.out.println("Invalid phone number! Try again.");
+        }
+        return phone;
+    }
+    public String readValidName(Scanner scanner) {
+        String name;
+
+        while (true) {
+            System.out.println("Enter full name (first + surname): ");
+            name = scanner.nextLine();
+
+            if (isValidName(name)) {
+                return name.toUpperCase();   // capitalize once, return
+            }
+
+            System.out.println("Invalid name! Try again.");
+        }
+    }
+    public boolean isValidName(String name) {
+        if (name == null || name.trim().isEmpty()) return false;
+
+        String[] parts = name.trim().split("\\s+");
+
+        if (parts.length < 2) return false; // Must have first + surname
+
+        for (String part : parts) {
+            if (part.length() < 2) return false;      // At least 2 letters each
+            for (int i = 0; i < part.length(); i++) { // Letters only
+                if (!Character.isLetter(part.charAt(i))) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     @Override
     public String generatePatientReport(int patientId) {
         Patient patient = findPatient(patientId);
         if (patient == null) {
             return "N/A";
         }
-        return "Patient Name: " + patient.getName() +
-                "\nEmail: \n" + patient.getEmail() +
-                "\nPhone: \n" + patient.getPhone() +
-                "\nMedical Record: " + patient.getMedicalHistory() +
-                "\nAppointments: \n" + patient.getAppointments();
+        return "Patient Name: " + patient.getName() +"\nEmail: \n" + patient.getEmail() +"\nPhone: \n" + patient.getPhone() + "\nMedical Record: " + patient.getMedicalHistory() + "\nAppointments: \n" + patient.getAppointments();
     }
 
     @Override
@@ -156,123 +251,168 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
     public static void main(String[] args) {
         ClinicManagementSystem system = new ClinicManagementSystem();
         Scanner scanner = new Scanner(System.in);
-        System.out.println("====== Welcome to Natembea =======");
+
+        // load saved files from folder
+        try {
+            system.loadFromFile("file/patients.txt");
+            system.loadFromFile("file/doctors.txt");
+            system.loadFromFile("file/appointments.txt");
+        } catch (Exception e) {
+            System.out.println("Starting with empty records...");
+        }
+
         boolean continueRun = true;
-        while (continueRun) { 
+        System.out.println("====== Welcome to Natembea =======");
+
+        while (continueRun) {
             System.out.println("What would you like to do: ");
-            System.out.println("1. Create Appointment \n 2. Register Doctor 3. Generate Report");
+            System.out.println("1. Create Appointment");
+            System.out.println("2. Register Doctor");
+            System.out.println("3. Generate Report");
+            System.out.println("4. View All Patients");
+            System.out.println("5. View All Doctors");
+            System.out.println("6. View Appointments by Date");
+            System.out.println("7. Exit System");
+
             int menuOption = scanner.nextInt();
             scanner.nextLine();
 
             switch (menuOption) {
-                case 1:
-                    System.out.println("Enter the patients full name: ");
-                    String patientName = scanner.nextLine();
-                    System.out.println("Enter the patients email address: ");
-                    String patientEmail = scanner.nextLine();
-                    System.out.println("Enter the patients phone number: ");
-                    String patientPhone = scanner.nextLine();
+
+                case 1: // CREATE APPOINTMENT
+                    String patientName = system.readValidName(scanner);
+                    String patientEmail = system.readValidEmail(scanner);
+                    String patientPhone = system.readValidPhone(scanner);
+
                     system.addPatient(patientName, patientEmail, patientPhone);
-                    System.out.println("ID for Doctor to attend to patient");
+
+                    System.out.println("Enter Doctor ID to attend to patient: ");
                     int doctorId = scanner.nextInt();
                     scanner.nextLine();
-                    System.out.println("Type of Appointment:  \n 1.Checkup \n2.Vaccination \n3.Follow-Up ");
-                    int appoint = scanner.nextInt();
+
+                    Doctor doctor = system.findDoctor(doctorId);
+                    if (doctor == null) break;
+
+                    System.out.println("Type of Appointment:");
+                    System.out.println("1. Checkup");
+                    System.out.println("2. Vaccination");
+                    System.out.println("3. Follow-Up");
+                    int app = scanner.nextInt();
                     scanner.nextLine();
-                    String inputAppointmentType ="";
-                    switch(appoint){
+
+                    String type = "";
+                    switch (app) {
                         case 1:
-                            inputAppointmentType = "Checkup";
+                            type = "Checkup";
                             break;
                         case 2:
-                            inputAppointmentType = "Vaccination";
+                            type = "Vaccination";
                             break;
                         case 3:
-                            inputAppointmentType = "Follow-Up";
+                            type = "Follow-Up";
                             break;
                         default:
-                            System.out.println("Enter options 1-3");
+                            System.out.println("Invalid option.");
+                            break;
                     }
-                    if (!inputAppointmentType.equals("")){
-                        if (system.findDoctor(doctorId) != null){
-                            //addAppointmentByDate(String doctor, String appointmentType,String patient)
-                            system.addAppointmentByDate(system.findDoctor(doctorId),inputAppointmentType, system.findPatient( nextPatentId - 1),LocalDate.now().toString());
-                            System.out.println("Enter the patients' weight: ");
-                            double weight = scanner.nextDouble();
-                            scanner.nextLine();
-                            System.out.println("Enter the patients' height: ");
-                            double height = scanner.nextDouble();
-                            scanner.nextLine();
-                            System.out.println("Enter the patients' symptoms: ");
-                            String symptoms = scanner.nextLine();
-                            LocalDate date = LocalDate.now();
-                            //public MedicalRecord(int patientId, Patient patient, Doctor doctor, double weight, double height, String symptoms, LocalDateTime date) {
 
-                           MedicalRecord record = new MedicalRecord(system.findPatient(nextPatentId - 1), system.findDoctor(doctorId), weight, height, symptoms, null);
-                           //MedicalRecord(Patient patient, Doctor doctor, double weight, double height, String symptoms, LocalDateTime date, String prescription) {
-       
-                           system.findPatient(nextPatentId - 1).addMedicalRecord(record);
-                            
-                        }
+                    system.addAppointmentByDate(doctor,type,system.findPatient(nextPatentId - 1),LocalDate.now().toString());
+
+                    System.out.println("Enter patient's weight: ");
+                    double weight = scanner.nextDouble();
+                    scanner.nextLine();
+
+                    System.out.println("Enter patient's height: ");
+                    double height = scanner.nextDouble();
+                    scanner.nextLine();
+
+                    System.out.println("Enter symptoms: ");
+                    String symptoms = scanner.nextLine();
+
+                    MedicalRecord record = new MedicalRecord(system.findPatient(nextPatentId - 1),doctor,weight,height,symptoms,null);
+
+                    system.findPatient(nextPatentId - 1).addMedicalRecord(record);
+                    try {
+                        system.saveToFile("file/patients.txt");
+                        system.saveToFile("file/appointments.txt");
+                    } catch (IOException e) {
+                        System.out.println("Error saving files.");
                     }
-        
+
                     break;
-                case 2:
-                    System.out.println("Enter the Doctors full name: ");
-                    String doctorName = scanner.nextLine();
-                    System.out.println("Enter the Doctors email address: ");
-                    String doctorEmail = scanner.nextLine();
-                    System.out.println("Enter the Doctors phone number: ");
-                    String doctorPhone = scanner.nextLine();
+
+                case 2: // REGISTER DOCTOR
+                    String doctorName = system.readValidName(scanner);
+                    String doctorEmail = system.readValidEmail(scanner);
+                    String doctorPhone = system.readValidPhone(scanner);
+
                     system.addDoctor(doctorName, doctorEmail, doctorPhone);
-                    System.out.println("Doctor added succesfully");
-                    break;
-                case 3:
-                    System.out.println("Enter the Patient ID: ");
-                    int patientid = Integer.parseInt(scanner.nextLine());
-                    Patient patient = system.findPatient(patientid);
 
-                    if (patient == null) {
+                    try {
+                        system.saveToFile("file/doctors.txt");
+                    } catch (IOException e) {
+                        System.out.println("Error saving doctor.");
+                    }
+
+                    System.out.println("Doctor added successfully.");
+                    break;
+
+                case 3: // REPORTS
+                    System.out.println("Enter Patient ID: ");
+                    int pid = scanner.nextInt();
+                    scanner.nextLine();
+
+                    Patient p = system.findPatient(pid);
+                    if (p == null) {
                         System.out.println("No patient with that ID.");
                         break;
                     }
 
-                    System.out.println("What kind of report would you like to generate: \n 1. Medical History \n 2. Appointments");
-                    int opt = scanner.nextInt();
+                    System.out.println("1. Medical History");
+                    System.out.println("2. Appointments");
+                    int r = scanner.nextInt();
                     scanner.nextLine();
 
-                    switch (opt) {
-                        case 1:
-                            System.out.println("Medical history for patient " + patientid + ":");
-                            System.out.println(patient.getMedicalHistory());
-                            break;
-                        case 2:
-                            System.out.println("Appointments for patient " + patientid + ":");
-                            System.out.println(patient.getAppointments());
-                            break;
-                        default:
-                            System.out.println("Select 1 or 2 only");
+                    if (r == 1) {
+                        System.out.println(p.getMedicalHistory());
+                    } else if (r == 2) {
+                        System.out.println(p.getAppointments());
+                    } else {
+                        System.out.println("Invalid option.");
                     }
                     break;
 
-                default:
-                    System.out.println("Please select option 1 - 3 ");
-            }
-            System.out.println("Do you want to continue: \n1. Yes\n2. No");
-            int run = scanner.nextInt();
-            switch (run) {
-                case 1:
-                    continueRun = true;
+                case 4: // VIEW ALL PATIENTS
+                    if (system.patients.isEmpty()) System.out.println("No patients found.");
+                    else system.patients.values().forEach(System.out::println);
                     break;
-                case 2:
+
+                case 5: // VIEW ALL DOCTORS
+                    if (system.doctors.isEmpty()) System.out.println("No doctors found.");
+                    else system.doctors.forEach(System.out::println);
+                    break;
+
+                case 6: // VIEW APPOINTMENTS BY DATE
+                    System.out.println("Enter date (YYYY-MM-DD):");
+                    String dateInput = scanner.nextLine();
+                    LocalDate d = LocalDate.parse(dateInput);
+
+                    if (system.getAppointmentByDate(d) == null)
+                        System.out.println("No appointments on that date.");
+                    else
+                        system.getAppointmentByDate(d).forEach(System.out::println);
+                    break;
+
+                case 7: // EXIT
                     continueRun = false;
-                    System.out.println("System Shutdown");
+                    System.out.println("System Shutdown.");
                     break;
+
                 default:
-                    throw new AssertionError();
-                }
-        }   
+                    System.out.println("Please select a valid option (1-7)");
+            }
+        }
     }
-           
+
 
 }
