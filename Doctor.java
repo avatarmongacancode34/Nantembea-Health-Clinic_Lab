@@ -1,5 +1,5 @@
 public class Doctor extends Person {
-    private String speciality;
+
     private int doctorId;
 
     public Doctor(int doctorId, String name, String email, String phone) {
@@ -8,9 +8,6 @@ public class Doctor extends Person {
        
     }
 
-    public String getSpeciality() { 
-        return speciality;
-    }
 
     public int getDoctorId() {
         return doctorId;
