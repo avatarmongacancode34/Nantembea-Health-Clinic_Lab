@@ -1,0 +1,3 @@
+1001,John Doe,john.doe@shesi.edu.gh,1234567890
+1002,Jane Smith,jane.smith@shesi.edu.gh,0987654321
+1003,Kofi Mensah,kofi.mensah@shesi.edu.gh,1122334455

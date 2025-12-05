@@ -37,10 +37,16 @@ public class Appointment {
     }
 
     public void setAppoitmentType(String appointmentType) {
+        if (appointmentType == null || appointmentType.isEmpty()) {
+            throw new IllegalArgumentException("Appointment type cannot be null or empty");
+        }
         this.appointmentType = appointmentType;
     }
 
     public void setPatient(String patient) {
+        if (patient == null || patient.isEmpty()) {
+            throw new IllegalArgumentException("Patient cannot be null or empty");
+        }
         this.patient = patient;
     }
 
@@ -49,6 +55,9 @@ public class Appointment {
     }
 
     public void setDoctor(String doctor) {
+        if (doctor == null || doctor.isEmpty()) {
+            throw new IllegalArgumentException("Doctor cannot be null or empty");
+        }
         this.doctor = doctor;
     }
 
@@ -57,6 +66,9 @@ public class Appointment {
     }
 
     public void setDate(LocalDate date) {
+        if (date == null) {
+            throw new IllegalArgumentException("Date cannot be null");
+        }
         this.date = date;
     }
 
