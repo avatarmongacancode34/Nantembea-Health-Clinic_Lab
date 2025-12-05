@@ -16,9 +16,7 @@ public class Patient extends Person {
 
     }
 
-    public ArrayList getMedicalRecord(){
-        return medicalHistory;
-    }
+    
     public TreeMap getAppointments(){
         return appointments;
     }
