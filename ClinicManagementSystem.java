@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -14,6 +15,7 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
     private TreeMap<LocalDate, ArrayList<Appointment>> appointmentsByDate;
     private static int nextPatentId = 1;
     private static int nextDoctorId = 1;
+    Scanner scanner = new Scanner(System.in);
    
 
     public ClinicManagementSystem() {
@@ -44,7 +46,15 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                         writer.write(a.toString() + "\n");
                     }
                 }
+            }else if (filename.endsWith("records.txt")) {
+                for (Patient patient : patients.values()) {
+                    for (MedicalRecord record : patient.getMedicalHistory()) {
+                        writer.write(record.toString() + "\n");
+                    }
+                }
             }
+
+            
         }
     }
 
@@ -94,6 +104,23 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                         appointmentsByDate.get(date).add(appointment);
                         patient.addAppointment(date,appointment);
                         
+                    }
+                }
+
+                else if (filename.endsWith("records.txt")) {
+                    int patientId = Integer.parseInt(attributes[0]);
+                    int doctorId = Integer.parseInt(attributes[1]);
+                    double weight = Double.parseDouble(attributes[2]);
+                    double height = Double.parseDouble(attributes[3]);
+                    String symptoms = attributes[4];
+                    LocalDateTime date = LocalDateTime.parse(attributes[5]);
+
+                    Patient p = findPatient(patientId);
+                    Doctor d = findDoctor(doctorId);
+
+                    if (p != null && d != null) {
+                        MedicalRecord r = new MedicalRecord(p, d, weight, height, symptoms, date);
+                        p.addMedicalRecord(r);
                     }
                 }
 
@@ -151,7 +178,7 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
     }
 
 
-    public String readValidEmail(Scanner scanner) {
+    public String readValidEmail() {
         String email;
         while (true) {
             System.out.println("Enter email: ");
@@ -183,7 +210,7 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
         return phone.length() >= 7 && phone.length() <= 15;
     }
 
-    public String readValidPhone(Scanner scanner) {
+    public String readValidPhone() {
         String phone;
         while (true) {
             System.out.println("Enter phone number: ");
@@ -193,7 +220,7 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
         }
         return phone;
     }
-    public String readValidName(Scanner scanner) {
+    public String readValidName() {
         String name;
 
         while (true) {
@@ -257,6 +284,8 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
             system.loadFromFile("file/patients.txt");
             system.loadFromFile("file/doctors.txt");
             system.loadFromFile("file/appointments.txt");
+            system.loadFromFile("file/records.txt");
+
         } catch (Exception e) {
             System.out.println("Starting with empty records...");
         }
@@ -274,15 +303,22 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
             System.out.println("6. View Appointments by Date");
             System.out.println("7. Exit System");
 
-            int menuOption = scanner.nextInt();
+            int menuOption;
+            try {
+                menuOption = scanner.nextInt();;
+            } catch (Exception e) {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.nextLine(); 
+                continue; 
+            }
             scanner.nextLine();
 
             switch (menuOption) {
 
                 case 1: // CREATE APPOINTMENT
-                    String patientName = system.readValidName(scanner);
-                    String patientEmail = system.readValidEmail(scanner);
-                    String patientPhone = system.readValidPhone(scanner);
+                    String patientName = system.readValidName();
+                    String patientEmail = system.readValidEmail();
+                    String patientPhone = system.readValidPhone();
 
                     system.addPatient(patientName, patientEmail, patientPhone);
 
@@ -335,6 +371,7 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                     try {
                         system.saveToFile("file/patients.txt");
                         system.saveToFile("file/appointments.txt");
+                        system.saveToFile("file/records.txt");
                     } catch (IOException e) {
                         System.out.println("Error saving files.");
                     }
@@ -342,9 +379,9 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                     break;
 
                 case 2: // REGISTER DOCTOR
-                    String doctorName = system.readValidName(scanner);
-                    String doctorEmail = system.readValidEmail(scanner);
-                    String doctorPhone = system.readValidPhone(scanner);
+                    String doctorName = system.readValidName();
+                    String doctorEmail = system.readValidEmail();
+                    String doctorPhone = system.readValidPhone();
 
                     system.addDoctor(doctorName, doctorEmail, doctorPhone);
 
