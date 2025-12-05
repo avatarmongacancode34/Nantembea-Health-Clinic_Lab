@@ -1,31 +1,42 @@
 
 import java.time.LocalDate;
 
-public  class Appointment{
+public class Appointment {
     private String patient;
-    private  String doctor;
+    private String doctor;
     private LocalDate date;
     private int appointmentId;
     private String appointmentType;
 
-    public Appointment(int appointmentId,String doctor, String patient, String appointmentType){
+    public Appointment(int appointmentId, String doctor, String patient, String appointmentType) {
         this.patient = patient;
         this.doctor = doctor;
         this.date = LocalDate.now();
         this.appointmentId = appointmentId;
         this.appointmentType = appointmentType;
-
     }
+
+    public Appointment(int appointmentId, String doctor, String patient, String appointmentType, LocalDate date) {
+        this.patient = patient;
+        this.doctor = doctor;
+        this.date = date;
+        this.appointmentId = appointmentId;
+        this.appointmentType = appointmentType;
+    }
+
     public int getAppointmentId() {
         return appointmentId;
     }
+
     public String getPatient() {
         return patient;
     }
-    public String getAppointmentType(){
+
+    public String getAppointmentType() {
         return appointmentType;
     }
-    public void setAppoitmentType(String appointmentType){
+
+    public void setAppoitmentType(String appointmentType) {
         this.appointmentType = appointmentType;
     }
 
@@ -50,7 +61,7 @@ public  class Appointment{
     }
 
     @Override
-    public String toString(){
-        return(appointmentId + "," + date + "," + doctor + "," + appointmentType + patient);
+    public String toString() {
+        return (appointmentId + "," + date + "," + doctor + "," + appointmentType + patient);
     }
 }
