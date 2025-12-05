@@ -67,6 +67,6 @@ public class Appointment {
 
     @Override
     public String toString() {
-        return (patient.getPatientId() + "," + date.toString() + "," + doctor.getName() + doctor.getDoctorId() + ","+ "," + appointmentType + "," + patient);
+        return (patient.getPatientId() + "," + date.toString() + "," + doctor.getName() + doctor.getDoctorId() + ","+ "," + appointmentType);
     }
 }
