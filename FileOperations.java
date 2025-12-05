@@ -8,3 +8,4 @@ public interface FileOperations {
     void loadFromFile(String filename) throws IOException;
 
 }
+
