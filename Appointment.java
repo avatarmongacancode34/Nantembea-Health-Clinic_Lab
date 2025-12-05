@@ -2,13 +2,13 @@
 import java.time.LocalDate;
 
 public class Appointment {
-    private String patient;
-    private String doctor;
+    private Patient patient;
+    private Doctor doctor;
     private LocalDate date;
     private int appointmentId;
     private String appointmentType;
 
-    public Appointment(int appointmentId, String doctor, String patient, String appointmentType) {
+    public Appointment(int appointmentId, Doctor doctor, Patient patient, String appointmentType) {
         this.patient = patient;
         this.doctor = doctor;
         this.date = LocalDate.now();
@@ -16,7 +16,7 @@ public class Appointment {
         this.appointmentType = appointmentType;
     }
 
-    public Appointment(int appointmentId, String doctor, String patient, String appointmentType, LocalDate date) {
+    public Appointment(int appointmentId, Doctor doctor, Patient patient, String appointmentType, LocalDate date) {
         this.patient = patient;
         this.doctor = doctor;
         this.date = date;
@@ -28,7 +28,7 @@ public class Appointment {
         return appointmentId;
     }
 
-    public String getPatient() {
+    public Patient getPatient() {
         return patient;
     }
 
@@ -43,19 +43,19 @@ public class Appointment {
         this.appointmentType = appointmentType;
     }
 
-    public void setPatient(String patient) {
-        if (patient == null || patient.isEmpty()) {
+    public void setPatient(Patient patient) {
+        if (patient == null) {
             throw new IllegalArgumentException("Patient cannot be null or empty");
         }
         this.patient = patient;
     }
 
-    public String getDoctor() {
+    public Doctor getDoctor() {
         return doctor;
     }
 
-    public void setDoctor(String doctor) {
-        if (doctor == null || doctor.isEmpty()) {
+    public void setDoctor(Doctor doctor) {
+        if (doctor == null) {
             throw new IllegalArgumentException("Doctor cannot be null or empty");
         }
         this.doctor = doctor;

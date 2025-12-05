@@ -1,12 +1,12 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 
 public class Patient extends Person {
     private int patientId;
     private ArrayList<MedicalRecord> medicalHistory;
-    private TreeMap<Date, Appointment> appointments;
+    private TreeMap<LocalDate, Appointment> appointments;
 
     public Patient(int patientId, String name, String email, String phone) {
         super(name, email, phone);
@@ -29,6 +29,10 @@ public class Patient extends Person {
 
     public void addMedicalRecord(MedicalRecord record) {
         medicalHistory.add(record); // Array:st addition
+    }
+
+    public void addAppointment(LocalDate date, Appointment appointment){
+        appointments.put(date, appointment);
     }
 
     public List<MedicalRecord> getMedicalHistory() {

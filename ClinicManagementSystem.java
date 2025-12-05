@@ -59,13 +59,13 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                     nextDoctorId = (doctorId > nextPatentId) ? doctorId + 1 : nextDoctorId;
 
                 } else if (filename.endsWith("appointments.txt")) {
-                    int appointmentId = Integer.parseInt(attributes[0]);
+                    int patientId = Integer.parseInt(attributes[0]);
                     LocalDate date = LocalDate.parse(attributes[1]);
                     String doctorName = attributes[2];
                     String appointmentType = attributes[3];
                     String patient = attributes[4];
 
-                    Appointment appointment = new Appointment(appointmentId, doctorName, patient, appointmentType,
+                    Appointment appointment = new Appointment(patientId, doctorName, patient, appointmentType,
                             date);
                     ArrayList<Appointment> appointmentList = new ArrayList<>();
                     appointmentList.add(appointment);
@@ -190,10 +190,12 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                         scanner.nextLine();
                         System.out.println("Enter the patients' symptoms: ");
                         String symptoms = scanner.nextLine();
+                        LocalDate date = LocalDate.now();
                         //public MedicalRecord(int patientId, Patient patient, Doctor doctor, double weight, double height, String symptoms, LocalDateTime date) {
 
                         MedicalRecord record = new MedicalRecord(nextPatentId - 1, system.findPatient(nextPatentId - 1), system.findDoctor(doctorId), weight, height, symptoms, null);
-                    
+                        system.findPatient(nextPatentId - 1).addMedicalRecord(record);
+                        system.findPatient( nextAppointmentId-1).addAppointment(date, appoinme );
                     }
                 }
                 system.findDoctor(doctorId);
