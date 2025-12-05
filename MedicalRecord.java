@@ -9,14 +9,16 @@ public class MedicalRecord {
     private String symptoms;
     private String prescription;
     private LocalDateTime date;
+    private Patient patient;
 
-    public MedicalRecord(int patientId, Patient patient, Doctor doctor, double weight, double height, String symptoms, LocalDateTime date) {
-
+    public MedicalRecord(Patient patient, Doctor doctor, double weight, double height, String symptoms, LocalDateTime date, String prescription) {
+        this.patient = patient;
         this.doctor = doctor;
         this.weight = weight;
         this.height = height;
         this.symptoms = symptoms;
-        this.date = LocalDateTime.now();
+        this.date = date;
+        this.prescription = prescription;
     }
 
     public Doctor getDoctor() {
@@ -34,14 +36,32 @@ public class MedicalRecord {
     public String getSymptoms() {
         return symptoms;
     }
+    public Patient getPatient() {
+        return patient;
+    }
 
 
     public LocalDateTime getDate() {
         return date;
     }
+    public String getPrescription() {
+        return prescription;
+    }
+    public void setPatient(Patient patient) {
+        if (patient == null) {
+            throw new IllegalArgumentException("Patient cannot be null");
+        }
+        this.patient = patient;
+    }
 
     public void setDoctor(Doctor doctor) {
+        if (doctor == null) {
+            throw new IllegalArgumentException("Doctor cannot be null");
+        }
         this.doctor = doctor;
+    }
+    public void setPrescription(String prescription) {
+        this.prescription = prescription;
     }
 
     public void setWeight(double weight) {
@@ -49,17 +69,21 @@ public class MedicalRecord {
     }
 
     public void setSymptoms(String symptoms) {
+        if (symptoms == null || symptoms.isEmpty()) {
+            throw new IllegalArgumentException("Symptoms cannot be null or empty");
+        }
         this.symptoms = symptoms;
     }
+    
 
     public void setDate(LocalDateTime date) {
         this.date = date;
     }
+    
 
     @Override
     public String toString() {
-        return "Doctor=" + doctor.getName() + "\nweight=" + weight + height + "\nsymptoms=" + symptoms
-                + "\nprescription=" + prescription + "\ndate=" + date;
+        return patient.getPatientId() + "," + doctor.getDoctorId() + "," + weight + "," + height + "," + symptoms + "," + prescription + "," + date;
     }
 
 }

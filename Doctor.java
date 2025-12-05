@@ -2,15 +2,13 @@ public class Doctor extends Person {
     private String speciality;
     private int doctorId;
 
-    public Doctor(int doctorId, String name, String email, String phone) {
+    public Doctor(int doctorId, String name, String email, String phone, String speciality) {
         super(name, email, phone);
         this.doctorId = doctorId;
+        this.speciality = speciality;
     }
 
-    public String getSpeciality() {
-        if (speciality == null || speciality.isEmpty()) {
-            throw new IllegalArgumentException("Speciality cannot be null or empty");
-        }
+    public String getSpeciality() { 
         return speciality;
     }
 
@@ -54,5 +52,10 @@ public class Doctor extends Person {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
         super.setName(name);
+    }
+
+    @Override
+    public String toString() {
+        return doctorId + "," + speciality + "," + getName() + "," + getEmail() + "," + getPhone();
     }
 }
