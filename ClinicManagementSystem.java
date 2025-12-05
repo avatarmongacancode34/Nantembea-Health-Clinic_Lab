@@ -165,10 +165,30 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                 System.out.println("ID for Doctor to attend to patient");
                 int doctorId = scanner.nextInt();
                 scanner.nextLine();
-                if (system.findDoctor(doctorId) != null){
-                    //addAppointmentByDate(String doctor, String appointmentType,String patient)
-                    system.appointmentsByDate(system.findDoctor(doctorId).getName(), appointmentType, patientName );
+                System.out.println("Type of Appointment:  \n 1.Checkup \n2.Vaccination \n3.Follow-Up ");
+                int appoint = scanner.nextInt();
+                scanner.nextLine();
+                String inputAppointmentType ="";
+                switch(appoint){
+                    case 1:
+                        inputAppointmentType = "Checkup";
+                        break;
+                    case 2:
+                        inputAppointmentType = "Vaccination";
+                        break;
+                    case 3:
+                        inputAppointmentType = "Follow-Up";
+                        break;
+                    default:
+                        System.out.println("Enter options 1-3");
                 }
+                if (!inputAppointmentType.equals("")){
+                    if (system.findDoctor(doctorId) != null){
+                        //addAppointmentByDate(String doctor, String appointmentType,String patient)
+                        system.addAppointmentByDate(system.findDoctor(doctorId).getName(),inputAppointmentType, patientName);
+                    }
+                }
+
                 
                 system.findDoctor(doctorId);
                 break;
