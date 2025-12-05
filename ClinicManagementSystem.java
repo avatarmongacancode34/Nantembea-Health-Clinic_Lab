@@ -14,6 +14,7 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
     private TreeMap<LocalDate, ArrayList<Appointment>> appointmentsByDate;
     private static int nextPatentId = 1;
     private static int nextDoctorId = 1;
+    Scanner scanner = new Scanner(System.in);
    
 
     public ClinicManagementSystem() {
@@ -151,7 +152,7 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
     }
 
 
-    public String readValidEmail(Scanner scanner) {
+    public String readValidEmail() {
         String email;
         while (true) {
             System.out.println("Enter email: ");
@@ -183,7 +184,7 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
         return phone.length() >= 7 && phone.length() <= 15;
     }
 
-    public String readValidPhone(Scanner scanner) {
+    public String readValidPhone() {
         String phone;
         while (true) {
             System.out.println("Enter phone number: ");
@@ -193,7 +194,7 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
         }
         return phone;
     }
-    public String readValidName(Scanner scanner) {
+    public String readValidName() {
         String name;
 
         while (true) {
@@ -280,9 +281,9 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
             switch (menuOption) {
 
                 case 1: // CREATE APPOINTMENT
-                    String patientName = system.readValidName(scanner);
-                    String patientEmail = system.readValidEmail(scanner);
-                    String patientPhone = system.readValidPhone(scanner);
+                    String patientName = system.readValidName();
+                    String patientEmail = system.readValidEmail();
+                    String patientPhone = system.readValidPhone();
 
                     system.addPatient(patientName, patientEmail, patientPhone);
 
@@ -342,9 +343,9 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                     break;
 
                 case 2: // REGISTER DOCTOR
-                    String doctorName = system.readValidName(scanner);
-                    String doctorEmail = system.readValidEmail(scanner);
-                    String doctorPhone = system.readValidPhone(scanner);
+                    String doctorName = system.readValidName();
+                    String doctorEmail = system.readValidEmail();
+                    String doctorPhone = system.readValidPhone();
 
                     system.addDoctor(doctorName, doctorEmail, doctorPhone);
 
