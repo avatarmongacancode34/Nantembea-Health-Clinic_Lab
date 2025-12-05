@@ -20,8 +20,6 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
         this.patients = new HashMap<>();
         this.doctors = new ArrayList<>();
         this.appointmentsByDate = new TreeMap<>();
-        
-
     }
 
     // TODO: Implement interface methods
@@ -32,7 +30,6 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                 writer.write("\n");
             }
         }
-        
     }
 
     @Override
@@ -42,17 +39,16 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 String[] attributes = line.split(",");
-                if (filename.endsWith("patients.txt")){
+                if (filename.endsWith("patients.txt")) {
                     int patientId = Integer.parseInt(attributes[0]);
                     String name = attributes[1];
                     String email = attributes[2];
                     String phone = attributes[3];
                     Patient patient = new Patient(patientId, name, email, phone);
                     patients.put(patientId, patient);
-                    nextPatentId = (patientId > nextPatentId)? patientId + 1 : nextPatentId; 
+                    nextPatentId = (patientId > nextPatentId) ? patientId + 1 : nextPatentId;
 
-                }
-                else if (filename.endsWith("doctors.txt")){
+                } else if (filename.endsWith("doctors.txt")) {
                     int doctorId = Integer.parseInt(attributes[0]);
                     String name = attributes[1];
                     String email = attributes[2];
@@ -60,29 +56,23 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                     Doctor doctor = new Doctor(doctorId, name, email, phone);
                     doctors.add(doctor);
 
-                    nextDoctorId = (doctorId > nextPatentId)? doctorId + 1 : nextDoctorId; 
+                    nextDoctorId = (doctorId > nextPatentId) ? doctorId + 1 : nextDoctorId;
 
-                }
-                else if (filename.endsWith("appointments.txt")){
+                } else if (filename.endsWith("appointments.txt")) {
                     int appointmentId = Integer.parseInt(attributes[0]);
                     LocalDate date = LocalDate.parse(attributes[1]);
                     String doctorName = attributes[2];
                     String appointmentType = attributes[3];
                     String patient = attributes[4];
-                    
-                     //public Appointment (int appointmentId,Doctor doctor,Patient patient, String appointmentType){
- 
-                    Appointment appointment = new Appointment(appointmentId, doctorName, patient, appointmentType);
-                    ArrayList appointmentList = new ArrayList<>();
+
+                    Appointment appointment = new Appointment(appointmentId, doctorName, patient, appointmentType,
+                            date);
+                    ArrayList<Appointment> appointmentList = new ArrayList<>();
                     appointmentList.add(appointment);
                     appointmentsByDate.put(appointment.getDate(), appointmentList);
-                    nextAppointmentId = (appointmentId > nextAppointmentId)? appointmentId + 1 : nextAppointmentId; 
-
-                }      
-
-                // Parse and create Patient Objects
+                    nextAppointmentId = (appointmentId > nextAppointmentId) ? appointmentId + 1 : nextAppointmentId;
+                }
             }
-
         }
     }
 
@@ -92,75 +82,81 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
     }
 
     public Patient findPatient(int patientId) {
-        Patient patient = patients.get(patientId); 
-        if (patient == null){
+        Patient patient = patients.get(patientId);
+        if (patient == null) {
             System.out.println("Patient not found");
         }
-        return  patient;
-        // HashMap Lookup
+        return patient;
     }
-    
-    public void addDoctor(String name, String email, String phone){
+
+    public void addDoctor(String name, String email, String phone) {
         Doctor doctor = new Doctor(nextDoctorId++, name, email, phone);
         doctors.add(doctor);
-
     }
+
     public Doctor findDoctor(int doctorId) {
-        for (Doctor doctor : doctors){
-            if (doctor.getDoctorId() == doctorId){
+        for (Doctor doctor : doctors) {
+            if (doctor.getDoctorId() == doctorId) {
                 return doctor;
             }
         }
         return null;
     }
-    public void addAppointmentByDate(String doctor, String appointmentType,String patient){
-        Appointment appointment = new Appointment(nextAppointmentId++, doctor, patient, appointmentType);
-        ArrayList tempAppointmentsList = new ArrayList<>();
-        appointmentsByDate.put(appointment.getDate(), tempAppointmentsList);
-        
+
+    public void addAppointmentByDate(String doctor, String appointmentType, String patient, String date) {
+        LocalDate localDate = LocalDate.parse(date);
+        Appointment appointment = new Appointment(nextAppointmentId++, doctor, patient, appointmentType, localDate);
+
+        if (appointmentsByDate.containsKey(localDate)) {
+            ArrayList<Appointment> existingList = appointmentsByDate.get(localDate);
+            existingList.add(appointment);
+        } else {
+            ArrayList<Appointment> newList = new ArrayList<>();
+            newList.add(appointment);
+            appointmentsByDate.put(localDate, newList);
+        }
     }
-    public ArrayList getAppointmentByDate(LocalDate date){
+
+    public ArrayList<Appointment> getAppointmentByDate(LocalDate date) {
         return appointmentsByDate.get(date);
     }
 
     @Override
     public String generatePatientReport(int patientId) {
         Patient patient = findPatient(patientId);
-        if (patient == null){
-            System.out.println("N/A");
+        if (patient == null) {
+            return "N/A";
         }
         return "Patient Name: " + patient.getName() +
-            "\nEmail: \n" + patient.getEmail() +
-            "\nPhone: \n" + patient.getPhone() +
-            "\nMedical Record: " + patient.getMedicalHistory() +
-            "\nAppointments: \n" + patient.getAppointments();
-
+                "\nEmail: \n" + patient.getEmail() +
+                "\nPhone: \n" + patient.getPhone() +
+                "\nMedical Record: " + patient.getMedicalHistory() +
+                "\nAppointments: \n" + patient.getAppointments();
     }
-    
 
     @Override
     public String generateDailyAppointments(String date) {
         return "Appointments for " + date;
     }
-    
+
     public static void main(String[] args) {
         ClinicManagementSystem system = new ClinicManagementSystem();
         Scanner scanner = new Scanner(System.in);
         System.out.println("====== Welcome to Natembea =======");
-        
+
         System.out.println("What would you like to do: ");
         System.out.println("1. Create Appointment \n 2. Register Doctor");
         int menuOption = scanner.nextInt();
         scanner.nextLine();
 
-        switch(menuOption){
+        switch (menuOption) {
             case 1:
                 System.out.println("Enter the patients full name: ");
                 String patientName = scanner.nextLine();
                 System.out.println("Enter the patients email address: ");
                 String patientEmail = scanner.nextLine();
                 System.out.println("Enter the patients phone number: ");
-                String patientPhone= scanner.nextLine(); 
+                String patientPhone = scanner.nextLine();
                 system.addPatient(patientName, patientEmail, patientPhone);
                 System.out.println("ID for Doctor to attend to patient");
                 int doctorId = scanner.nextInt();
@@ -185,11 +181,21 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                 if (!inputAppointmentType.equals("")){
                     if (system.findDoctor(doctorId) != null){
                         //addAppointmentByDate(String doctor, String appointmentType,String patient)
-                        system.addAppointmentByDate(system.findDoctor(doctorId).getName(),inputAppointmentType, patientName);
+                        system.addAppointmentByDate(system.findDoctor(doctorId).getName(),inputAppointmentType, patientName,LocalDate.now().toString());
+                        System.out.println("Enter the patients' weight: ");
+                        double weight = scanner.nextDouble();
+                        scanner.nextLine();
+                        System.out.println("Enter the patients' height: ");
+                        double height = scanner.nextDouble();
+                        scanner.nextLine();
+                        System.out.println("Enter the patients' symptoms: ");
+                        String symptoms = scanner.nextLine();
+                        //public MedicalRecord(int patientId, Patient patient, Doctor doctor, double weight, double height, String symptoms, LocalDateTime date) {
+
+                        MedicalRecord record = new MedicalRecord(nextPatentId - 1, system.findPatient(nextPatentId - 1), system.findDoctor(doctorId), weight, height, symptoms, null);
+                    
                     }
                 }
-
-                
                 system.findDoctor(doctorId);
                 break;
             case 2:
@@ -199,6 +205,5 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
             default:
                 System.out.println("Please select option 1 - 3 ");
         }
-
-    }   
+    }
 }

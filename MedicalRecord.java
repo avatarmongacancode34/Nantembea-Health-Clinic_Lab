@@ -10,14 +10,12 @@ public class MedicalRecord {
     private String prescription;
     private LocalDateTime date;
 
-    public MedicalRecord(int patientId, Patient patient, Doctor doctor, double weight, double height, String symptoms,
-            String prescription, LocalDateTime date) {
+    public MedicalRecord(int patientId, Patient patient, Doctor doctor, double weight, double height, String symptoms, LocalDateTime date) {
 
         this.doctor = doctor;
         this.weight = weight;
         this.height = height;
         this.symptoms = symptoms;
-        this.prescription = prescription;
         this.date = LocalDateTime.now();
     }
 
@@ -37,9 +35,6 @@ public class MedicalRecord {
         return symptoms;
     }
 
-    public String getPrescription() {
-        return prescription;
-    }
 
     public LocalDateTime getDate() {
         return date;
@@ -55,10 +50,6 @@ public class MedicalRecord {
 
     public void setSymptoms(String symptoms) {
         this.symptoms = symptoms;
-    }
-
-    public void setPrescription(String prescription) {
-        this.prescription = prescription;
     }
 
     public void setDate(LocalDateTime date) {
