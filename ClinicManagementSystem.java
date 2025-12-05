@@ -106,7 +106,12 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
 
     }
     public Doctor findDoctor(int doctorId) {
-        return doctors.get(doctorId); // HashMap Lookup
+        for (Doctor doctor : doctors){
+            if (doctor.getDoctorId() == doctorId){
+                return doctor;
+            }
+        }
+        return null;
     }
     public void addAppointmentByDate(String doctor, String appointmentType,String patient){
         Appointment appointment = new Appointment(nextAppointmentId++, doctor, patient, appointmentType);
@@ -160,8 +165,11 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                 System.out.println("ID for Doctor to attend to patient");
                 int doctorId = scanner.nextInt();
                 scanner.nextLine();
-                //addAppointmentByDate(String doctor, String appointmentType,String patient)
-                system.appointmentsByDate(system.findDoctor(doctorId).getName(), appointmentType,  )
+                if (system.findDoctor(doctorId) != null){
+                    //addAppointmentByDate(String doctor, String appointmentType,String patient)
+                    system.appointmentsByDate(system.findDoctor(doctorId).getName(), appointmentType, patientName );
+                }
+                
                 system.findDoctor(doctorId);
                 break;
             case 2:
