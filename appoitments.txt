@@ -1,0 +1,4 @@
+1001,2024-03-15,Dr Amponsah,General Checkup
+1002,2024-03-16,Dr Nyarko,Vaccination
+1003,2024-03-17,Dr Amponsah,Follow-up
+
