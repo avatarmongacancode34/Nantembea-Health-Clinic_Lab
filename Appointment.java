@@ -5,27 +5,20 @@ public class Appointment {
     private Patient patient;
     private Doctor doctor;
     private LocalDate date;
-    private int appointmentId;
     private String appointmentType;
 
-    public Appointment(int appointmentId, Doctor doctor, Patient patient, String appointmentType) {
+    public Appointment(Doctor doctor, Patient patient, String appointmentType) {
         this.patient = patient;
         this.doctor = doctor;
         this.date = LocalDate.now();
-        this.appointmentId = appointmentId;
         this.appointmentType = appointmentType;
     }
 
-    public Appointment(int appointmentId, Doctor doctor, Patient patient, String appointmentType, LocalDate date) {
+    public Appointment(Doctor doctor, Patient patient, String appointmentType, LocalDate date) {
         this.patient = patient;
         this.doctor = doctor;
         this.date = date;
-        this.appointmentId = appointmentId;
         this.appointmentType = appointmentType;
-    }
-
-    public int getAppointmentId() {
-        return appointmentId;
     }
 
     public Patient getPatient() {
@@ -36,7 +29,7 @@ public class Appointment {
         return appointmentType;
     }
 
-    public void setAppoitmentType(String appointmentType) {
+    public void setAppointmentType(String appointmentType) {
         if (appointmentType == null || appointmentType.isEmpty()) {
             throw new IllegalArgumentException("Appointment type cannot be null or empty");
         }
@@ -74,6 +67,6 @@ public class Appointment {
 
     @Override
     public String toString() {
-        return (appointmentId + "," + date + "," + doctor + "," + appointmentType + patient);
+        return (patient.getPatientId() + "," + date.toString() + "," + doctor.getName() + doctor.getDoctorId() + ","+ "," + appointmentType + "," + patient);
     }
 }

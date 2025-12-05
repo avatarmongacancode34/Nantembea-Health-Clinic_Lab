@@ -65,12 +65,12 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                     String appointmentType = attributes[3];
                     String patient = attributes[4];
 
-                    Appointment appointment = new Appointment(patientId, doctorName, patient, appointmentType,
-                            date);
+
+                    Appointment appointment = new Appointment(findDoctor(nextDoctorId), findPatient(patientId), appointmentType,date);
                     ArrayList<Appointment> appointmentList = new ArrayList<>();
                     appointmentList.add(appointment);
                     appointmentsByDate.put(appointment.getDate(), appointmentList);
-                    nextAppointmentId = (appointmentId > nextAppointmentId) ? appointmentId + 1 : nextAppointmentId;
+                    nextAppointmentId = (appointment.getPatient().getPatientId() > nextAppointmentId) ? appointment.getPatient().getPatientId() + 1 : nextAppointmentId;
                 }
             }
         }
@@ -103,9 +103,10 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
         return null;
     }
 
-    public void addAppointmentByDate(String doctor, String appointmentType, String patient, String date) {
+    public void addAppointmentByDate(Doctor doctor, String appointmentType, Patient patient, String date) {
         LocalDate localDate = LocalDate.parse(date);
-        Appointment appointment = new Appointment(nextAppointmentId++, doctor, patient, appointmentType, localDate);
+        // public Appointment(Doctor doctor, Patient patient, String appointmentType)
+        Appointment appointment = new Appointment(doctor,  patient, appointmentType);
 
         if (appointmentsByDate.containsKey(localDate)) {
             ArrayList<Appointment> existingList = appointmentsByDate.get(localDate);
@@ -181,7 +182,7 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                 if (!inputAppointmentType.equals("")){
                     if (system.findDoctor(doctorId) != null){
                         //addAppointmentByDate(String doctor, String appointmentType,String patient)
-                        system.addAppointmentByDate(system.findDoctor(doctorId).getName(),inputAppointmentType, patientName,LocalDate.now().toString());
+                        system.addAppointmentByDate(system.findDoctor(doctorId),inputAppointmentType, system.findPatient( nextPatentId - 1),LocalDate.now().toString());
                         System.out.println("Enter the patients' weight: ");
                         double weight = scanner.nextDouble();
                         scanner.nextLine();
@@ -195,7 +196,13 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
 
                         MedicalRecord record = new MedicalRecord(nextPatentId - 1, system.findPatient(nextPatentId - 1), system.findDoctor(doctorId), weight, height, symptoms, null);
                         system.findPatient(nextPatentId - 1).addMedicalRecord(record);
-                        system.findPatient( nextAppointmentId-1).addAppointment(date, appoinme );
+
+                        for (Appointment app: system.getAppointmentByDate(date)){
+                            if(app.getPatient().getPatientId() == nextAppointmentId) {
+                                system.findPatient( nextAppointmentId-1).addAppointment(date, app);
+                            }
+                        }
+                        
                     }
                 }
                 system.findDoctor(doctorId);
