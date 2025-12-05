@@ -1,7 +1,7 @@
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -50,7 +50,7 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
     public Patient findPatient(int patientId) {
         return patients.get(patientId); // HashMap Lookup
     }
-
+    
     @Override
     public String generatePatientReport(int patientId) {
         return "Report for patient " + patientId;
