@@ -7,18 +7,16 @@ public class MedicalRecord {
     private double weight;
     private double height;
     private String symptoms;
-    private String prescription;
     private LocalDateTime date;
     private Patient patient;
 
-    public MedicalRecord(Patient patient, Doctor doctor, double weight, double height, String symptoms, LocalDateTime date, String prescription) {
+    public MedicalRecord(Patient patient, Doctor doctor, double weight, double height, String symptoms, LocalDateTime date) {
         this.patient = patient;
         this.doctor = doctor;
         this.weight = weight;
         this.height = height;
         this.symptoms = symptoms;
         this.date = date;
-        this.prescription = prescription;
     }
 
     public Doctor getDoctor() {
@@ -44,9 +42,6 @@ public class MedicalRecord {
     public LocalDateTime getDate() {
         return date;
     }
-    public String getPrescription() {
-        return prescription;
-    }
     public void setPatient(Patient patient) {
         if (patient == null) {
             throw new IllegalArgumentException("Patient cannot be null");
@@ -59,9 +54,6 @@ public class MedicalRecord {
             throw new IllegalArgumentException("Doctor cannot be null");
         }
         this.doctor = doctor;
-    }
-    public void setPrescription(String prescription) {
-        this.prescription = prescription;
     }
 
     public void setWeight(double weight) {
@@ -83,7 +75,7 @@ public class MedicalRecord {
 
     @Override
     public String toString() {
-        return patient.getPatientId() + "," + doctor.getDoctorId() + "," + weight + "," + height + "," + symptoms + "," + prescription + "," + date;
+        return patient.getPatientId() + "," + doctor.getDoctorId() + "," + weight + "," + height + "," + symptoms +  "," + date;
     }
 
 }

@@ -208,8 +208,10 @@ public class ClinicManagementSystem implements FileOperations, ReportGenerator {
                             LocalDate date = LocalDate.now();
                             //public MedicalRecord(int patientId, Patient patient, Doctor doctor, double weight, double height, String symptoms, LocalDateTime date) {
 
-                            MedicalRecord record = new MedicalRecord(nextPatentId - 1, system.findPatient(nextPatentId - 1), system.findDoctor(doctorId), weight, height, symptoms, null);
-                            system.findPatient(nextPatentId - 1).addMedicalRecord(record);
+                           MedicalRecord record = new MedicalRecord(system.findPatient(nextPatentId - 1), system.findDoctor(doctorId), weight, height, symptoms, null);
+                           //MedicalRecord(Patient patient, Doctor doctor, double weight, double height, String symptoms, LocalDateTime date, String prescription) {
+       
+                           system.findPatient(nextPatentId - 1).addMedicalRecord(record);
                             
                         }
                     }

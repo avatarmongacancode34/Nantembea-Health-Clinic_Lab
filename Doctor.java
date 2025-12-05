@@ -2,21 +2,14 @@ public class Doctor extends Person {
     private String speciality;
     private int doctorId;
 
-    public Doctor(int doctorId, String name, String email, String phone, String speciality) {
+    public Doctor(int doctorId, String name, String email, String phone) {
         super(name, email, phone);
         this.doctorId = doctorId;
-        this.speciality = speciality;
+       
     }
 
     public String getSpeciality() { 
         return speciality;
-    }
-
-    public void setSpeciality(String speciality) {
-        if (speciality == null || speciality.isEmpty()) {
-            throw new IllegalArgumentException("Speciality cannot be null or empty");
-        }
-        this.speciality = speciality;
     }
 
     public int getDoctorId() {
